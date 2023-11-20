@@ -24,3 +24,8 @@ app.post("/update", (req, res) => {
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 })
+
+
+// TODO: create front end
+// create back-end logic 
+// create db layer, that contains state (also need to decide what i want to store and what i want to compute dynamically)
