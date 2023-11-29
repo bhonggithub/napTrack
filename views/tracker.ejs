@@ -6,54 +6,87 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THIS IS EJS TEST</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>NapTrack | Viewer</title>
+    <link rel="stylesheet" href="css/style.css" />
   </head>
 
   <body>
-    <h1>It's a <%= day%>
+    <h1>Welcome to NapTrack, parent of <%= queryName %>
     </h1>
-    <h1>Welcome to NapTrack</h1>
     <h2>This is a tracker for your little one's naps</h2>
-    <li>
-      <%= documents %>
-    </li>
 
-    <div id="stopwatch">00:00</div>
-    <button id="stopButton">Stop</button>
 
-    <button class="btn btn-primary"> This is a button. </button>
-    <form action="/update" method="POST">
+
+    <!-- <button class="btn btn-primary"> This is a button. </button> -->
+    <!-- <form action="/update" method="POST">
       <label for="childName">Child's Name:</label>
       <input type="text" id="childName" name="childName" required>
+      <input type="submit" value="Submit">
+    </form> -->
+
+    <form action="/view" method="GET">
+      <!-- <label for="childName">Child's Name:</label> -->
+      <input type="text" id="childName" name="childName" placeholder="Child's Name" required>
       <input type="submit" value="Submit">
     </form>
 
 
+    <div id="stopwatch">00:00</div>
+    <button id="stopButton">Stop</button>
+
     <div class="box" id="heading">
       <h1>
-        <%= day %>
+        <%= queryName %>'s Naps
       </h1>
     </div>
 
     <div class="box">
       <ul>
-        <% documents.forEach((document)=> { %>
-          <div class="item">
-            <input type="checkbox">
-            <p>
-              <%= document.childName %>
-                <%= document.napNumber%>
-                  <%= document.napStartTime %>
+        <table>
+          <tr>
+            <th>Child Name</th>
+            <th>Nap Number</th>
+            <th>Nap Start Time</th>
+            <th>Nap End Time</th>
+            <th>Nap Elapsed Time</th>
+          </tr>
+
+          <% documents.forEach((document)=> { %>
+            <div class="item">
+              <!-- <input type="checkbox"> -->
+              <p>
+                <tr>
+                  <td>
+                    <%= document.childName %>
+                  </td>
+                  <td>
+                    <%= document.napNumber%>
+                  </td>
+                  <td>
+                    <%= document.napStartTime %>
+                  </td>
+                  <td>
                     <%= document.napEndTime %>
-            </p>
-          </div>
-          <% }); %>
+                  </td>
+                  <td>
+                    <%= document.napElapsedTime %>
+                  </td>
+                </tr>
+              </p>
+            </div>
+            <% }); %>
+        </table>
       </ul>
-      <!-- <form class="item" action="/" method="post">
-        <input type="text" name="newItem" placeholder="New Item">
-        <button type="submit" name="button">+</button>
-      </form> -->
+
+      <div>
+        <form class="item" action="/" method="post">
+
+          <input type="datetime-local" name="newNapStartTime" placeholder="napStartTime">
+          <input type="datetime-local" name="newNapEndTime" placeholder="napEndTime">
+          <button type="submit" name="button">+</button>
+        </form>
+      </div>
+
     </div>
   </body>
 

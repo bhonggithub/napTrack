@@ -8,11 +8,12 @@ import dotenv from 'dotenv';
 
 
 const app = express();
-const port = 3000;
+const port = 8080;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config();
 var isAsleep = false;
 const day = 'Tuesday';
+var queryName = "";
 
 const uri = process.env.MONGODB_URI;
 // console.log('uri is ' + uri);
@@ -88,6 +89,31 @@ app.post("/retrieve", (req, res) => {
   // console.log("asleep is" + isAsleep);
 })
 
+app.post("/view", async (req, res) => {
+  console.log("view post was called!");
+  try {
+    // req.db = await client.connect();
+    const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
+    console.log(req.body);
+    const newNap = {
+      childName
+    }
+    const queryName = req.query.childName;
+    console.log('queryName is ' + queryName);
+    const query = { childName: queryName };
+    const options = {
+      sort: { napNumber: 1 }
+    }
+    const documents = await collection.find(query, options).toArray();
+    console.log(documents);
+    res.render("tracker.ejs", { queryName, day, documents });
+    // res.render("JSON", { documents }); //Replace "your_template_name" with the name of the template you want to render (if you are using a template engine). Alternatively, you can send the data as JSON if your application doesn't use template rendering.
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send("An error occurred while fetching data.");
+  }
+})
+
 app.get("/view", async (req, res) => {
   console.log("view was called!");
   try {
@@ -102,7 +128,7 @@ app.get("/view", async (req, res) => {
     }
     const documents = await collection.find(query, options).toArray();
     console.log(documents);
-    res.render("index.ejs", { queryName, day, documents });
+    res.render("tracker.ejs", { queryName, day, documents });
     // res.render("JSON", { documents }); //Replace "your_template_name" with the name of the template you want to render (if you are using a template engine). Alternatively, you can send the data as JSON if your application doesn't use template rendering.
   } catch (error) {
     console.error("Error:", error);
@@ -113,17 +139,18 @@ app.get("/view", async (req, res) => {
 
 // 7. This is where you shine! Perform your database operations here, e.g. the app.get function. This is what you should do to display a list of documents (aka data) from a MongoDB collection: 
 app.get("/", async (req, res) => {
-  try {
-    // req.db = await client.connect();
-    const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
-    const documents = await collection.find({}).toArray();
-    console.log(documents);
-    res.render("index.ejs", { day, documents });
-    // res.render("JSON", { documents }); //Replace "your_template_name" with the name of the template you want to render (if you are using a template engine). Alternatively, you can send the data as JSON if your application doesn't use template rendering.
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).send("An error occurred while fetching data.");
-  }
+  res.render("index");
+  // try {
+  //   // req.db = await client.connect();
+  //   const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
+  //   const documents = await collection.find({}).toArray();
+  //   console.log(documents);
+  //   res.render("index.ejs", { queryName, day, documents });
+  //   // res.render("JSON", { documents }); //Replace "your_template_name" with the name of the template you want to render (if you are using a template engine). Alternatively, you can send the data as JSON if your application doesn't use template rendering.
+  // } catch (error) {
+  //   console.error("Error:", error);
+  //   res.status(500).send("An error occurred while fetching data.");
+  // }
 });
 
 app.listen(port, () => {
