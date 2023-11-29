@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 3000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 dotenv.config();
 var isAsleep = false;
