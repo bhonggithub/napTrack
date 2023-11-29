@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NapTrack | Viewer</title>
     <link rel="stylesheet" href="css/style.css" />
+
   </head>
 
   <body>
@@ -15,24 +16,15 @@
     </h1>
     <h2>This is a tracker for your little one's naps</h2>
 
-
-
-    <!-- <button class="btn btn-primary"> This is a button. </button> -->
-    <!-- <form action="/update" method="POST">
-      <label for="childName">Child's Name:</label>
-      <input type="text" id="childName" name="childName" required>
-      <input type="submit" value="Submit">
-    </form> -->
-
-    <form action="/view" method="GET">
+    <form id="nameBox" action="/view" method="GET">
       <!-- <label for="childName">Child's Name:</label> -->
       <input type="text" id="childName" name="childName" placeholder="Child's Name" required>
       <input type="submit" value="Submit">
     </form>
 
 
-    <div id="stopwatch">00:00</div>
-    <button id="stopButton">Stop</button>
+    <!-- <div id="stopwatch">00:00</div>
+    <button id="stopButton">Stop</button> -->
 
     <div class="box" id="heading">
       <h1>
@@ -48,7 +40,7 @@
             <th>Nap Number</th>
             <th>Nap Start Time</th>
             <th>Nap End Time</th>
-            <th>Nap Elapsed Time</th>
+            <th>Nap Elapsed Time (Min)</th>
           </tr>
 
           <% documents.forEach((document)=> { %>
@@ -78,21 +70,46 @@
         </table>
       </ul>
 
-      <div>
-        <form class="item" action="/" method="post">
-
-          <input type="datetime-local" name="newNapStartTime" placeholder="napStartTime">
-          <input type="datetime-local" name="newNapEndTime" placeholder="napEndTime">
-          <button type="submit" name="button">+</button>
-        </form>
-      </div>
-
     </div>
+    <div>
+      <form id="newNapInput" class="item" action="/view" method="post">
+
+        <div style="display: flex; justify-content: space-between;">
+          <!-- <label for="cName">Child's Name:</label><br> -->
+          <input type="hidden" id="cName" name="cName" value=<%=queryName%> readonly><br>
+
+          <div style="text-align: center;">
+            <label for="nextNapNum">Nap Number</label>
+            <input type="number" name="nextNapNum" value=<%=documents.length+1 %> style="margin-bottom: 10px;
+            text-align: center;"
+            readonly>
+          </div>
+
+          <!-- Changes for newNapStartTime -->
+          <div style="text-align: center;">
+            <label for="newNapStartTime">Start Time</label>
+            <input type="time" name="newNapStartTime" placeholder="Start Time" style="margin-bottom: 10px;">
+          </div>
+
+          <!-- Changes for newNapEndTime -->
+          <div style="text-align: center;">
+            <label for="newNapEndTime">End Time</label>
+            <input type="time" name="newNapEndTime" placeholder="End Time" style="margin-bottom: 10px;">
+          </div>
+
+          <!-- Changes for the Save button -->
+          <div style="text-align: center;">
+            <button type="submit" name="saveButton"
+              style="background-color: #363636; color: white; border-radius: 50%; padding: 10px 15px; font-weight: bold; margin-top: 42px;">+</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
   </body>
 
-  <style>
 
-  </style>
-  <footer>(c) Benjamin Hong</footer>
+  <footer>(c) Benjamin Hong 2023</footer>
 
 </html>

@@ -89,15 +89,12 @@ app.post("/retrieve", (req, res) => {
   // console.log("asleep is" + isAsleep);
 })
 
-app.post("/view", async (req, res) => {
-  console.log("view post was called!");
+app.get("/view", async (req, res) => {
+  console.log("view was called!");
   try {
     // req.db = await client.connect();
     const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
-    console.log(req.body);
-    const newNap = {
-      childName
-    }
+    // console.log(req);
     const queryName = req.query.childName;
     console.log('queryName is ' + queryName);
     const query = { childName: queryName };
@@ -114,13 +111,37 @@ app.post("/view", async (req, res) => {
   }
 })
 
-app.get("/view", async (req, res) => {
-  console.log("view was called!");
+app.post("/view", async (req, res) => {
+  console.log("view post was called!");
   try {
+    //take the inputs in the form, craft a new document, and store the new document
+    //then, render again, with the new set of documents.
     // req.db = await client.connect();
     const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
-    console.log(req);
-    const queryName = req.query.childName;
+    console.log(req.body);
+    console.log("type of newNapEndTime is: " + typeof (req.body.newNapEndTime));
+    console.log("type of newNapStartTime is: " + typeof (req.body.newNapStartTime));
+
+    const startTime = new Date(`1970-01-01T${req.body.newNapStartTime}`);
+    const endTime = new Date(`1970-01-01T${req.body.newNapEndTime}`);
+    const newNapElapsedMin = (endTime - startTime) / (1000 * 60);
+
+    // const newNapElapsedMin = (parseInt(req.body.newNapEndTime) - parseInt(req.body.newNapStartTime)) / (1000 * 60)
+    console.log("elapsed time is " + newNapElapsedMin);
+    const newNap = {
+      childName: req.body.cName,
+      napNumber: parseInt(req.body.nextNapNum),
+      napStartTime: req.body.newNapStartTime,
+      napEndTime: req.body.newNapEndTime,
+      napElapsedTime: newNapElapsedMin
+    }
+    console.log("newNap is " + newNap);
+    const result = await collection.insertOne(newNap);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+
+    res.redirect(`/view?childName=${req.body.cName}`);
+    //query DB for existing list, and display them.
+    const queryName = req.body.cName;
     console.log('queryName is ' + queryName);
     const query = { childName: queryName };
     const options = {
@@ -135,6 +156,8 @@ app.get("/view", async (req, res) => {
     res.status(500).send("An error occurred while fetching data.");
   }
 })
+
+
 
 
 // 7. This is where you shine! Perform your database operations here, e.g. the app.get function. This is what you should do to display a list of documents (aka data) from a MongoDB collection: 
