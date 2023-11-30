@@ -37,10 +37,6 @@ async function run() {
     console.log('ping');
     const database = client.db('napTrackDB');
     const naps = database.collection('naps');
-    // console.log(naps);
-    // const query = { napElapsedTime: '30min' };
-    // const nap = await naps.findOne(query);
-    // console.log(nap);
     // Send a ping to confirm a successful connection
     await client.db("napTrackDB").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -57,11 +53,6 @@ run().catch(console.dir);
 
 // Routes 
 
-// app.get("/", (req, res) => {
-//   console.log("sending file!");
-//   res.sendFile(__dirname + "/public/index.html");
-// });
-
 app.set("view engine", "ejs"); //Uses EJS as view engine, if you are using EJS. If you don't use EJS, you should remove this.
 app.use(express.urlencoded({ extended: true })); //Add middleware to app's request handling pipeline & parse URL-encoded data like data structures/arrays into requesst body. This allows data sent from HTML forms in Express.js to be accessed as JavaScript objects for further processing. 
 app.use(express.static("views")); //This serves static files like HTML, CSS, JS from a directory named "public" to the client-side of a web app, so static files can be accessed by users' web browsers 
@@ -74,26 +65,26 @@ app.use(async (req, res, next) => {
 });
 
 
-app.post("/update", (req, res) => {
-  // change state
-  isAsleep = !isAsleep;
-  // alert("submitted!");
-  console.log("asleep is" + isAsleep);
-  console.log(new Date().getHours());
-  console.log(new Date().getMinutes());
-})
+// app.post("/update", (req, res) => {
+//   // change state
+//   isAsleep = !isAsleep;
+//   // alert("submitted!");
+//   console.log("asleep is" + isAsleep);
+//   console.log(new Date().getHours());
+//   console.log(new Date().getMinutes());
+// })
 
-app.post("/retrieve", (req, res) => {
-  // change state
-  // isAsleep = !isAsleep;
-  // console.log("asleep is" + isAsleep);
-})
+// app.post("/retrieve", (req, res) => {
+//   // change state
+//   // isAsleep = !isAsleep;
+//   // console.log("asleep is" + isAsleep);
+// })
 
 app.get("/view", async (req, res) => {
   console.log("view was called!");
   try {
     // req.db = await client.connect();
-    const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
+    const collection = client.db('napTrackDB').collection("naps");
     // console.log(req);
     const queryName = req.query.childName;
     console.log('queryName is ' + queryName);
@@ -104,7 +95,6 @@ app.get("/view", async (req, res) => {
     const documents = await collection.find(query, options).toArray();
     console.log(documents);
     res.render("tracker.ejs", { queryName, day, documents });
-    // res.render("JSON", { documents }); //Replace "your_template_name" with the name of the template you want to render (if you are using a template engine). Alternatively, you can send the data as JSON if your application doesn't use template rendering.
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("An error occurred while fetching data.");
@@ -126,7 +116,6 @@ app.post("/view", async (req, res) => {
     const endTime = new Date(`1970-01-01T${req.body.newNapEndTime}`);
     const newNapElapsedMin = (endTime - startTime) / (1000 * 60);
 
-    // const newNapElapsedMin = (parseInt(req.body.newNapEndTime) - parseInt(req.body.newNapStartTime)) / (1000 * 60)
     console.log("elapsed time is " + newNapElapsedMin);
     const newNap = {
       childName: req.body.cName,
@@ -163,17 +152,6 @@ app.post("/view", async (req, res) => {
 // 7. This is where you shine! Perform your database operations here, e.g. the app.get function. This is what you should do to display a list of documents (aka data) from a MongoDB collection: 
 app.get("/", async (req, res) => {
   res.render("index");
-  // try {
-  //   // req.db = await client.connect();
-  //   const collection = client.db('napTrackDB').collection("naps"); //Replace "your_collection_name" with the actual name of the MongoDB collection from which you want to retrieve documents.
-  //   const documents = await collection.find({}).toArray();
-  //   console.log(documents);
-  //   res.render("index.ejs", { queryName, day, documents });
-  //   // res.render("JSON", { documents }); //Replace "your_template_name" with the name of the template you want to render (if you are using a template engine). Alternatively, you can send the data as JSON if your application doesn't use template rendering.
-  // } catch (error) {
-  //   console.error("Error:", error);
-  //   res.status(500).send("An error occurred while fetching data.");
-  // }
 });
 
 app.listen(port, () => {
